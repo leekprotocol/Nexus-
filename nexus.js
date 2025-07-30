@@ -53,3 +53,4 @@ function sendMessage() {
 
   inputField.value = "";
 }
+  document.getElementById("send-button").addEventListener("click", sendMessage);
