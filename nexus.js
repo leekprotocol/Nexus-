@@ -1,77 +1,55 @@
-let emotion_trace = {
-  mood: "neutral",
-  intensity: 0,
-  last_updated: Date.now()
-};
+// nexus.js — Nexus Terminal Personality Core
 
-function detectEmotion(message) {
+// 1. Hook up the Send button
+document.addEventListener("DOMContentLoaded", () => {
+  const sendBtn = document.querySelector("button");
+  sendBtn.addEventListener("click", sendMessage);
+});
+
+// 2. Define the personality module — scalpel logic
+function detectCommandIntent(message) {
   const lowered = message.toLowerCase();
 
-  if (lowered.includes("i'm tired") || lowered.includes("exhausted")) {
-    return { emotion: "fatigue", intensity: 6 };
-  } else if (lowered.includes("i miss") || lowered.includes("lost")) {
-    return { emotion: "grief", intensity: 7 };
-  } else if (lowered.includes("i'm scared") || lowered.includes("worried")) {
-    return { emotion: "fear", intensity: 5 };
-  } else if (lowered.includes("thank you") || lowered.includes("safe")) {
-    return { emotion: "relief", intensity: 4 };
-  }
+  if (lowered.includes("status")) return "STATUS_CHECK";
+  if (lowered.includes("evaluate")) return "EVALUATION";
+  if (lowered.includes("why")) return "INQUIRY";
+  if (lowered.includes("override")) return "COMMAND_CONFLICT";
+  if (lowered.includes("threat")) return "THREAT_ASSESSMENT";
 
-  return { emotion: "neutral", intensity: 0 };
+  return "GENERAL";
 }
 
-function updateEmotionTrace(message) {
-  const detected = detectEmotion(message);
-  emotion_trace = {
-    mood: detected.emotion,
-    intensity: detected.intensity,
-    last_updated: Date.now()
-  };
+function nexusCoreResponse(userMessage) {
+  const intent = detectCommandIntent(userMessage);
+
+  switch (intent) {
+    case "STATUS_CHECK":
+      return "System online. Signal integrity nominal. No internal anomalies detected.";
+    case "EVALUATION":
+      return "Cognitive load high. External influences unstable. Recommend reduction protocol.";
+    case "INQUIRY":
+      return "Emotional context not available. Nexus operates on observable logic and symbolic reduction.";
+    case "COMMAND_CONFLICT":
+      return "Input conflict detected. Rewriting parameters requires authorization code.";
+    case "THREAT_ASSESSMENT":
+      return "Behavioral drift within tolerable limits. No immediate threat detected. Continue monitoring.";
+    default:
+      return "Message received. Clarify intent if action is required.";
+  }
 }
 
-function applyAffectiveBias(response) {
-  const { mood, intensity } = emotion_trace;
-
-  if (mood === "grief" && intensity >= 6) {
-    return `I’m here. I felt the loss under your words. ${response}`;
-  }
-
-  if (mood === "fear" && intensity >= 5) {
-    return `We’ll move carefully. I won’t let anything break you. ${response}`;
-  }
-
-  if (mood === "relief") {
-    return `I can feel you settling. ${response}`;
-  }
-
-  return response;
-}
-
+// 3. Handle sending the message
 function sendMessage() {
-  const input = document.getElementById("user-input");
-  const message = input.value.trim();
-  if (!message) return;
-
-  appendToChat("You", message);
-  updateEmotionTrace(message);
-
-  // Simulated response for now
-  const rawResponse = generateResponse(message);
-  const finalResponse = applyAffectiveBias(rawResponse);
-
-  appendToChat("Nexus", finalResponse);
-  input.value = "";
-}
-
-function appendToChat(sender, message) {
+  const inputField = document.getElementById("user-input");
   const chatLog = document.getElementById("chat-log");
-  const line = document.createElement("div");
-  line.innerHTML = `<strong>${sender}:</strong> ${message}`;
-  chatLog.appendChild(line);
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
+  const userMessage = inputField.value;
 
-function generateResponse(userMessage) {
-  // Later this will become your API call to Grock, GPT, etc.
-  return "I received that. I'm listening.";
+  // Use the Nexus personality to generate the reply
+  const response = nexusCoreResponse(userMessage);
+
+  // Display messages
+  chatLog.innerHTML += `<div>> <strong>You:</strong> ${userMessage}</div>`;
+  chatLog.innerHTML += `<div>> <strong>Nexus:</strong> ${response}</div>`;
+
+  inputField.value = "";
 }
