@@ -1,0 +1,35 @@
+body {
+  font-family: monospace;
+  background-color: #111;
+  color: #0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#chat-container {
+  width: 80%;
+  max-width: 700px;
+}
+
+#chat-log {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #0f0;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+#user-input {
+  width: 80%;
+  padding: 8px;
+}
+
+button {
+  width: 18%;
+  background: #0f0;
+  color: black;
+  padding: 8px;
+  border: none;
+}
